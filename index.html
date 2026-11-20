@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>햇살 교재몰 — 유치원 교재 쇼핑몰</title>
+<style>
+  :root{
+    --bg:#FFF8EC; --card:#FFFFFF; --ink:#33302B; --muted:#8A8378;
+    --accent:#FF6B35; --accent2:#FFB703; --green:#1DB99A; --line:#F0E6D8;
+    --radius:16px; --shadow:0 4px 16px rgba(80,50,0,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  a{color:inherit}
+  header{position:sticky;top:0;z-index:20;background:#FFFDF7;border-bottom:1px solid var(--line)}
+  .wrap{max-width:1020px;margin:0 auto;padding:0 16px}
+  .topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 0 8px}
+  .logo{font-size:24px;font-weight:800;letter-spacing:-.5px;cursor:pointer}
+  .logo small{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+  .search{flex:1;min-width:180px;display:flex;gap:8px}
+  .search input{flex:1;padding:10px 12px;border:2px solid var(--line);border-radius:999px;font-size:15px;background:#fff}
+  .btn{border:0;border-radius:999px;padding:10px 16px;font-size:15px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff}
+  .btn.secondary{background:#fff;color:var(--ink);border:2px solid var(--line)}
+  .btn.ghost{background:transparent;color:var(--ink);border:0;padding:10px 8px}
+  .btn.small{padding:7px 12px;font-size:14px}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  nav{display:flex;gap:6px;flex-wrap:wrap;padding:0 0 12px}
+  nav button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer}
+  nav button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .cart-count{background:#fff;color:var(--accent);border-radius:999px;padding:0 7px;margin-left:5px;font-size:13px}
+  main{padding:20px 0 60px}
+  .hero{background:#FFE9C9;border-radius:var(--radius);padding:20px;margin-bottom:18px}
+  .hero h1{margin:0 0 6px;font-size:22px}
+  .hero p{margin:0;color:#6B5B45}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;align-items:center}
+  .filters label{font-size:14px;font-weight:700;color:var(--muted)}
+  select,input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],textarea{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:15px;background:#fff;font-family:inherit}
+  .filters select{width:auto;min-width:130px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;display:flex;flex-direction:column}
+  .cover{height:150px;display:flex;align-items:center;justify-content:center;font-size:64px}
+  .card-body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .card-body h3{margin:0;font-size:17px}
+  .meta{font-size:13px;color:var(--muted)}
+  .price{font-size:18px;font-weight:800}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .row .spacer{flex:1}
+  .panel{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+  .panel h2{margin-top:0}
+  .hidden{display:none !important}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-grid .full{grid-column:1/-1}
+  .form-grid label{font-size:14px;font-weight:700;display:block;margin-bottom:5px}
+  .cart-item{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:12px 0}
+  .cart-item:last-child{border-bottom:0}
+  .thumb{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex:none}
+  .qty{display:flex;gap:6px;align-items:center}
+  .qty button{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:#fff;font-size:16px;cursor:pointer}
+  .totals{margin-left:auto;max-width:320px;width:100%}
+  .totals div{display:flex;justify-content:space-between;padding:4px 0}
+  .totals .grand{font-weight:800;font-size:18px;border-top:2px solid var(--line);margin-top:8px;padding-top:10px}
+  .order{border:2px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .badge{display:inline-block;background:#E6F7F1;color:#0B7A63;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+  .notice{background:#FFF3D6;border:1px solid #FFE08A;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px}
+  #error-banner{display:none;background:#FDECEA;color:#7A1F1A;border:1px solid #F5B5B0;border-radius:12px;padding:14px;margin:14px 0}
+  #error-banner button{margin-top:8px}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .modal{background:#fff;border-radius:20px;max-width:520px;width:100%;padding:22px;max-height:90vh;overflow:auto}
+  .modal .cover{height:170px;border-radius:14px;margin-bottom:14px}
+  .tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .tabs button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}
+  .tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .admin-list{margin-top:16px}
+  .admin-item{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding:10px 0;flex-wrap:wrap}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:24px 0 40px}
+  @media (max-width:640px){
+    .form-grid{grid-template-columns:1fr}
+    .logo{font-size:21px}
+    .topbar{padding-top:10px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo" onclick="showView('shop')">🌞 햇살 교재몰<small>유치원 교재 쇼핑몰 · 햇살교재</small></div>
+      <div class="search"><input type="text" id="search" placeholder="교재를 검색해 보세요 (예: 한글, 수학)" oninput="renderProducts()"></div>
+      <span id="user-area"></span>
+      <button class="btn" onclick="showView('cart')">🛒 장바구니<span class="cart-count" id="cart-count">0</span></button>
+    </div>
+    <nav>
+      <button data-nav="shop" class="active" onclick="showView('shop')">교재 둘러보기</button>
+      <button data-nav="cart" onclick="showView('cart')">장바구니</button>
+      <button data-nav="orders" onclick="showView('orders')">주문내역</button>
+      <button data-nav="admin" onclick="showView('admin')">교재 등록</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="error-banner" role="alert">
+    <strong>앗, 문제가 생겼어요.</strong><br>
+    페이지를 다시 불러오면 대부분 해결돼요. 저장된 정보가 없어도 쇼핑은 계속할 수 있어요.
+    <br><button class="btn small" onclick="location.reload()">다시 불러오기</button>
+  </div>
+
+  <!-- SHOP -->
+  <section id="view-shop">
+    <div class="hero">
+      <h1>우리 아이 첫 교재, 햇살 교재몰에서</h1>
+      <p>한글 · 수학 · 영어 · 미술 · 과학 · 음악 — 연령별로 골라 담아보세요. 30,000원 이상이면 배송비 무료예요.</p>
+    </div>
+    <div class="filters">
+      <label>연령</label>
+      <select id="age-filter" onchange="renderProducts()">
+        <option value="전체">전체</option><option>만 3세</option><option>만 4세</option><option>만 5세</option><option>공통</option>
+      </select>
+      <label>과목</label>
+      <select id="subject-filter" onchange="renderProducts()">
+        <option value="전체">전체</option><option>한글</option><option>수학</option><option>영어</option><option>미술</option><option>과학</option><option>음악</option>
+      </select>
+      <span id="result-count" class="meta"></span>
+    </div>
+    <div class="grid" id="product-grid"></div>
+  </section>
+
+  <!-- AUTH -->
+  <section id="view-auth" class="hidden">
+    <div class="panel" style="max-width:520px;margin:0 auto">
+      <div class="tabs">
+        <button id="tab-login" class="active" onclick="setAuthTab('login')">로그인</button>
+        <button id="tab-signup" onclick="setAuthTab('signup')">회원가입</button>
+      </div>
+      <div id="auth-login">
+        <div class="form-grid">
+          <div class="full"><label>이메일</label><input type="email" id="login-email" placeholder="parent@example.com"></div>
+          <div class="full"><label>비밀번호</label><input type="password" id="login-password" placeholder="비밀번호"></div>
+          <div class="full"><button class="btn" style="width:100%" onclick="doLogin()">로그인</button></div>
+        </div>
+        <p class="meta" style="margin-top:12px">아직 계정이 없으면 회원가입 탭에서 가입해 주세요. 가입 정보는 이 브라우저에만 저장돼요.</p>
+      </div>
+      <div id="auth-signup" class="hidden">
+        <div class="form-grid">
+          <div class="full"><label>이름 (학부모 이름)</label><input type="text" id="signup-name" placeholder="예: 김햇살"></div>
+          <div class="full"><label>이메일</label><input type="email" id="signup-email" placeholder="parent@example.com"></div>
+          <div class="full"><label>비밀번호</label><input type="password" id="signup-password" placeholder="4자 이상"></div>
+          <div class="full"><button class="btn" style="width:100%" onclick="doSignup()">회원가입</button></div>
+        </div>
+      </div>
+      <p id="auth-msg" class="meta"></p>
+    </div>
+  </section>
+
+  <!-- CART -->
+  <section id="view-cart" class="hidden">
+    <div class="panel">
+      <h2>장바구니</h2>
+      <div id="cart-items"></div>
+      <div class="totals" id="cart-totals"></div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn secondary" onclick="showView('shop')">계속 쇼핑하기</button>
+        <span class="spacer"></span>
+        <button class="btn" id="go-checkout-btn" onclick="showView('checkout')">결제하기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT -->
+  <section id="view-checkout" class="hidden">
+    <div class="panel">
+      <h2>결제하기 (모의결제)</h2>
+      <div class="notice">지금은 모의결제예요. 실제 카드 결제가 되지 않고, 돈이 빠져나가지 않아요.</div>
+      <div id="checkout-summary"></div>
+      <div class="form-grid" style="margin-top:14px">
+        <div><label>받는 사람</label><input type="text" id="co-name" placeholder="예: 김햇살"></div>
+        <div><label>연락처</label><input type="tel" id="co-phone" placeholder="010-0000-0000"></div>
+        <div class="full"><label>배송지 주소</label><input type="text" id="co-address" placeholder="예: 서울특별시 ..."></div>
+        <div class="full"><label>결제 방법</label>
+          <div class="row">
+            <label><input type="radio" name="pay" value="카드" checked style="width:auto"> 카드</label>
+            <label><input type="radio" name="pay" value="간편결제" style="width:auto"> 간편결제</label>
+            <label><input type="radio" name="pay" value="계좌이체" style="width:auto"> 계좌이체</label>
+          </div>
+        </div>
+        <div class="full"><button class="btn" style="width:100%" onclick="submitOrder()">모의결제하고 주문 완료하기</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDER CONFIRMATION -->
+  <section id="view-done" class="hidden">
+    <div class="panel" style="text-align:center">
+      <h2>🎉 주문이 완료됐어요!</h2>
+      <p id="done-text"></p>
+      <button class="btn" onclick="showView('orders')">주문내역 보기</button>
+      <button class="btn secondary" onclick="showView('shop')">쇼핑 계속하기</button>
+    </div>
+  </section>
+
+  <!-- ORDERS -->
+  <section id="view-orders" class="hidden">
+    <div class="panel">
+      <h2>주문내역</h2>
+      <div id="orders-list"></div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view-admin" class="hidden">
+    <div class="panel">
+      <h2>교재 등록 (관리자)</h2>
+      <p class="meta">새 교재를 등록하면 바로 상품 목록에 나와요. 등록한 교재는 이 브라우저에 저장돼요.</p>
+      <div class="form-grid">
+        <div class="full"><label>교재 이름</label><input type="text" id="ad-title" placeholder="예: 한글 첫걸음 워크북"></div>
+        <div><label>과목</label><select id="ad-subject"><option>한글</option><option>수학</option><option>영어</option><option>미술</option><option>과학</option><option>음악</option></select></div>
+        <div><label>연령</label><select id="ad-age"><option>만 3세</option><option>만 4세</option><option>만 5세</option><option>공통</option></select></div>
+        <div><label>가격 (원)</label><input type="number" id="ad-price" min="0" placeholder="12000"></div>
+        <div><label>재고 (권)</label><input type="number" id="ad-stock" min="0" placeholder="30"></div>
+        <div><label>표지 색상</label><input type="color" id="ad-color" value="#FF6B35" style="height:44px"></div>
+        <div><label>표지 이모지</label><select id="ad-emoji"><option>✏️</option><option>🔢</option><option>🔤</option><option>🎨</option><option>🔬</option><option>🎵</option><option>📚</option><option>🌈</option></select></div>
+        <div class="full"><label>설명</label><textarea id="ad-desc" rows="3" placeholder="교재 설명을 적어주세요."></textarea></div>
+        <div class="full row">
+          <button class="btn" id="ad-save-btn" onclick="saveProduct()">교재 등록하기</button>
+          <button class="btn secondary hidden" id="ad-cancel-btn" onclick="cancelEdit()">수정 취소</button>
+        </div>
+      </div>
+      <div class="admin-list" id="admin-list"></div>
+    </div>
+  </section>
+</main>
+
+<footer>햇살 교재몰 · 출판사: 햇살교재 · 결제는 모의결제입니다. 실제 결제가 되지 않아요.</footer>
+
+<div id="modal-root"></div>
+
+<script>
+/* Storage safety: every localStorage access is wrapped in try/catch.
+   If storage is blocked (e.g. inside an iframe), fall back to memory only. */
+(function(){
+  var mem = {};
+  window.safeStorage = {
+    get: function(k){ try{ return window.localStorage.getItem(k); }catch(e){ return (k in mem) ? mem[k] : null; } },
+    set: function(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){ mem[k]=String(v); } },
+    remove: function(k){ try{ window.localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
+  };
+  window.addEventListener('error', function(){
+    try{ var b=document.getElementById('error-banner'); if(b) b.style.display='block'; }catch(e){}
+  });
+})();
+
+var DEFAULT_PRODUCTS = [
+  {id:'p1', title:'한글 첫걸음 워크북', subject:'한글', age:'만 4세', price:12000, stock:42, color:'#FF6B35', emoji:'✏️', publisher:'햇살교재', desc:'자음과 모음을 놀이처럼 익히는 첫 한글 워크북이에요. 스티커 활동과 따라 쓰기가 가득해요.'},
+  {id:'p2', title:'숫자 놀이 수학 교재', subject:'수학', age:'만 3세', price:11000, stock:38, color:'#1DB99A', emoji:'🔢', publisher:'햇살교재', desc:'1부터 20까지, 세고 붙이고 그리며 수 개념을 잡는 놀이 수학 교재예요.'},
+  {id:'p3', title:'알파벳 팝! 영어 그림책', subject:'영어', age:'만 5세', price:15000, stock:27, color:'#FFB703', emoji:'🔤', publisher:'햇살교재', desc:'알파벳 대소문자와 파닉스를 그림과 챈트로 배우는 영어 첫 교재예요. QR 음원 포함.'},
+  {id:'p4', title:'오감 미술 놀이북', subject:'미술', age:'공통', price:13000, stock:35, color:'#EF476F', emoji:'🎨', publisher:'햇살교재', desc:'물감, 색종이, 점토 활동을 한 권에 담았어요. 집에서도 유치원에서도 즐기는 미술 놀이북.'},
+  {id:'p5', title:'호기심 과학 탐험대', subject:'과학', age:'만 5세', price:14000, stock:22, color:'#118AB2', emoji:'🔬', publisher:'햇살교재', desc:'자석, 물, 식물 관찰까지 — 직접 해보는 간단한 실험으로 과학 호기심을 키워요.'},
+  {id:'p6', title:'동요와 리듬 음악 교재', subject:'음악', age:'공통', price:10000, stock:50, color:'#7C5CBF', emoji:'🎵', publisher:'햇살교재', desc:'계절 동요 24곡과 리듬 악기 놀이를 담은 음악 교재예요. 악보와 율동 가이드 포함.'}
+];
+var FREE_SHIPPING = 30000, SHIPPING_FEE = 3000;
+
+function loadJSON(key, fallback){
+  try{ var raw = safeStorage.get(key); if(!raw) return fallback; return JSON.parse(raw); }catch(e){ return fallback; }
+}
+function saveJSON(key, val){ try{ safeStorage.set(key, JSON.stringify(val)); }catch(e){} }
+
+var products = loadJSON('sunshine_products_v1', null) || DEFAULT_PRODUCTS.slice();
+var cart = loadJSON('sunshine_cart_v1', []);
+var orders = loadJSON('sunshine_orders_v1', []);
+var session = loadJSON('sunshine_session_v1', null);
+var editingId = null;
+var detailQty = 1, detailId = null;
+
+function won(n){ try{ return Number(n).toLocaleString('ko-KR') + '원'; }catch(e){ return n + '원'; } }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function getUser(){ return session; }
+function findProduct(id){ for(var i=0;i<products.length;i++){ if(products[i].id===id) return products[i]; } return null; }
+
+function showView(name){
+  if(name==='checkout' && !getUser()){ alert('결제하려면 먼저 로그인해 주세요.'); showView('auth'); return; }
+  if(name==='checkout' && !cart.length){ alert('장바구니가 비어 있어요.'); showView('cart'); return; }
+  if(name==='checkout'){ renderCheckout(); }
+  if(name==='orders'){ renderOrders(); }
+  if(name==='admin'){ renderAdmin(); }
+  if(name==='cart'){ renderCart(); }
+  var views=['shop','auth','cart','checkout','done','orders','admin'];
+  views.forEach(function(v){ var el=document.getElementById('view-'+v); if(el) el.classList.toggle('hidden', v!==name); });
+  document.querySelectorAll('nav button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-nav')===name); });
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+function renderUserArea(){
+  var el=document.getElementById('user-area'); if(!el) return;
+  if(session){
+    el.innerHTML='<span style="font-weight:700">'+esc(session.name)+'님</span> <button class="btn secondary small" onclick="doLogout()">로그아웃</button>';
+  } else {
+    el.innerHTML='<button class="btn secondary" onclick="showView(\'auth\')">로그인 / 회원가입</button>';
+  }
+}
+function setAuthTab(tab){
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+  document.getElementById('auth-login').classList.toggle('hidden', tab!=='login');
+  document.getElementById('auth-signup').classList.toggle('hidden', tab!=='signup');
+}
+function doSignup(){
+  var name=document.getElementById('signup-name').value.trim();
+  var email=document.getElementById('signup-email').value.trim();
+  var pw=document.getElementById('signup-password').value;
+  var msg=document.getElementById('auth-msg');
+  if(!name || !email || pw.length<4){ msg.textContent='이름, 이메일, 4자 이상 비밀번호를 입력해 주세요.'; return; }
+  var users=loadJSON('sunshine_users_v1', []);
+  for(var i=0;i<users.length;i++){ if(users[i].email===email){ msg.textContent='이미 가입된 이메일이에요. 로그인해 주세요.'; return; } }
+  users.push({name:name, email:email, password:pw});
+  saveJSON('sunshine_users_v1', users);
+  session={name:name, email:email}; saveJSON('sunshine_session_v1', session);
+  msg.textContent=''; renderUserArea(); alert('회원가입이 완료됐어요. 환영합니다, '+name+'님!'); showView('shop');
+}
+function doLogin(){
+  var email=document.getElementById('login-email').value.trim();
+  var pw=document.getElementById('login-password').value;
+  var msg=document.getElementById('auth-msg');
+  var users=loadJSON('sunshine_users_v1', []);
+  for(var i=0;i<users.length;i++){
+    if(users[i].email===email && users[i].password===pw){
+      session={name:users[i].name, email:users[i].email}; saveJSON('sunshine_session_v1', session);
+      msg.textContent=''; renderUserArea(); alert('로그인했어요.'); showView('shop'); return;
+    }
+  }
+  msg.textContent='이메일 또는 비밀번호가 맞지 않아요.';
+}
+function doLogout(){ session=null; try{ safeStorage.remove('sunshine_session_v1'); }catch(e){} renderUserArea(); showView('shop'); }
+
+function renderProducts(){
+  var q=(document.getElementById('search').value||'').trim();
+  var age=document.getElementById('age-filter').value;
+  var subj=document.getElementById('subject-filter').value;
+  var grid=document.getElementById('product-grid'); if(!grid) return;
+  var list=products.filter(function(p){
+    if(age!=='전체' && p.age!==age) return false;
+    if(subj!=='전체' && p.subject!==subj) return false;
+    if(q && (p.title+p.subject+p.desc).indexOf(q)<0) return false;
+    return true;
+  });
+  document.getElementById('result-count').textContent='총 '+list.length+'권';
+  if(!list.length){ grid.innerHTML='<p class="meta">조건에 맞는 교재가 없어요. 검색어나 필터를 바꿔보세요.</p>'; return; }
+  grid.innerHTML=list.map(function(p){
+    return '<article class="card" onclick="openDetail(\''+p.id+'\')">'
+      + '<div class="cover" style="background:'+esc(p.color)+'">'+esc(p.emoji)+'</div>'
+      + '<div class="card-body"><h3>'+esc(p.title)+'</h3>'
+      + '<div class="meta">'+esc(p.subject)+' · '+esc(p.age)+' · '+esc(p.publisher||'햇살교재')+'</div>'
+      + '<div class="row"><span class="price">'+won(p.price)+'</span><span class="spacer"></span><span class="meta">재고 '+p.stock+'권</span></div>'
+      + '<button class="btn small" onclick="event.stopPropagation();addToCart(\''+p.id+'\',1)">장바구니에 담기</button>'
+      + '</div></article>';
+  }).join('');
+}
+function openDetail(id){
+  var p=findProduct(id); if(!p) return;
+  detailId=id; detailQty=1;
+  document.getElementById('modal-root').innerHTML=
+    '<div class="modal-backdrop" onclick="if(event.target===this) closeModal()">'
+    + '<div class="modal"><div class="cover" style="background:'+esc(p.color)+'">'+esc(p.emoji)+'</div>'
+    + '<h2 style="margin:0 0 6px">'+esc(p.title)+'</h2>'
+    + '<p class="meta">'+esc(p.subject)+' · '+esc(p.age)+' · '+esc(p.publisher||'햇살교재')+' · 재고 '+p.stock+'권</p>'
+    + '<p>'+esc(p.desc)+'</p><p class="price" style="font-size:20px">'+won(p.price)+'</p>'
+    + '<div class="row"><span>수량</span><div class="qty"><button onclick="changeDetailQty(-1)">−</button><span id="detail-qty">1</span><button onclick="changeDetailQty(1)">＋</button></div></div>'
+    + '<div class="row" style="margin-top:14px"><button class="btn" style="flex:1" onclick="addToCart(detailId, detailQty); closeModal();">장바구니에 담기</button><button class="btn secondary" onclick="closeModal()">닫기</button></div>'
+    + '</div></div>';
+}
+function changeDetailQty(d){ detailQty=Math.max(1, Math.min(99, detailQty+d)); var el=document.getElementById('detail-qty'); if(el) el.textContent=detailQty; }
+function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+
+function addToCart(id, qty){
+  var p=findProduct(id); if(!p) return;
+  qty=qty||1;
+  var found=null;
+  cart.forEach(function(c){ if(c.id===id) found=c; });
+  var cur=found?found.qty:0;
+  if(cur+qty>p.stock){ alert('재고보다 많이 담을 수 없어요. (재고 '+p.stock+'권)'); return; }
+  if(found) found.qty+=qty; else cart.push({id:id, qty:qty});
+  saveJSON('sunshine_cart_v1', cart); updateCartCount(); alert(p.title+'을(를) 장바구니에 담았어요.');
+}
+function updateCartCount(){
+  var n=0; cart.forEach(function(c){ n+=c.qty; });
+  var el=document.getElementById('cart-count'); if(el) el.textContent=n;
+}
+function cartTotals(){
+  var sub=0; cart.forEach(function(c){ var p=findProduct(c.id); if(p) sub+=p.price*c.qty; });
+  var ship=sub===0?0:(sub>=FREE_SHIPPING?0:SHIPPING_FEE);
+  return {sub:sub, ship:ship, total:sub+ship};
+}
+function renderCart(){
+  var box=document.getElementById('cart-items'); if(!box) return;
+  if(!cart.length){ box.innerHTML='<p class="meta">장바구니가 비어 있어요. 교재를 담아보세요.</p>'; document.getElementById('cart-totals').innerHTML=''; document.getElementById('go-checkout-btn').disabled=true; return; }
+  document.getElementById('go-checkout-btn').disabled=false;
+  box.innerHTML=cart.map(function(c){
+    var p=findProduct(c.id); if(!p) return '';
+    return '<div class="cart-item"><div class="thumb" style="background:'+esc(p.color)+'">'+esc(p.emoji)+'</div>'
+      + '<div style="flex:1"><strong>'+esc(p.title)+'</strong><br><span class="meta">'+won(p.price)+' · '+esc(p.subject)+' · '+esc(p.age)+'</span></div>'
+      + '<div class="qty"><button onclick="changeQty(\''+p.id+'\',-1)">−</button><span>'+c.qty+'</span><button onclick="changeQty(\''+p.id+'\',1)">＋</button></div>'
+      + '<strong>'+won(p.price*c.qty)+'</strong>'
+      + '<button class="btn secondary small" onclick="removeFromCart(\''+p.id+'\')">삭제</button></div>';
+  }).join('');
+  var t=cartTotals();
+  document.getElementById('cart-totals').innerHTML=
+    '<div><span>상품 합계</span><span>'+won(t.sub)+'</span></div>'
+    + '<div><span>배송비</span><span>'+(t.ship===0?'무료':won(t.ship))+'</span></div>'
+    + '<div class="grand"><span>총 결제금액</span><span>'+won(t.total)+'</span></div>'
+    + (t.sub>0 && t.sub<FREE_SHIPPING ? '<div class="meta">'+won(FREE_SHIPPING-t.sub)+' 더 담으면 배송비 무료예요.</div>' : '');
+}
+function changeQty(id,d){
+  cart.forEach(function(c){ if(c.id===id){ var p=findProduct(id); c.qty=Math.max(1, Math.min(p?p.stock:99, c.qty+d)); } });
+  saveJSON('sunshine_cart_v1', cart); updateCartCount(); renderCart();
+}
+function removeFromCart(id){ cart=cart.filter(function(c){ return c.id!==id; }); saveJSON('sunshine_cart_v1', cart); updateCartCount(); renderCart(); }
+
+function renderCheckout(){
+  var t=cartTotals();
+  var items=cart.map(function(c){ var p=findProduct(c.id); return p?esc(p.title)+' × '+c.qty+' — '+won(p.price*c.qty):''; }).filter(Boolean).join('<br>');
+  document.getElementById('checkout-summary').innerHTML='<p>'+items+'</p><p><strong>총 결제금액: '+won(t.total)+'</strong> (상품 '+won(t.sub)+' + 배송비 '+(t.ship===0?'무료':won(t.ship))+')</p>';
+  if(session && !document.getElementById('co-name').value){ document.getElementById('co-name').value=session.name; }
+}
+function submitOrder(){
+  if(!getUser()){ alert('로그인이 필요해요.'); showView('auth'); return; }
+  if(!cart.length){ alert('장바구니가 비어 있어요.'); return; }
+  var name=document.getElementById('co-name').value.trim();
+  var phone=document.getElementById('co-phone').value.trim();
+  var addr=document.getElementById('co-address').value.trim();
+  if(!name || !phone || !addr){ alert('받는 사람, 연락처, 배송지 주소를 모두 입력해 주세요.'); return; }
+  var pay='카드'; try{ var r=document.querySelector('input[name="pay"]:checked'); if(r) pay=r.value; }catch(e){}
+  var t=cartTotals();
+  var now=new Date();
+  var orderNo='ORD-'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+Math.floor(1000+Math.random()*9000);
+  var items=cart.map(function(c){ var p=findProduct(c.id); return p?{id:p.id, title:p.title, qty:c.qty, price:p.price}:null; }).filter(Boolean);
+  var order={no:orderNo, date:now.toLocaleString('ko-KR'), email:session.email, name:name, phone:phone, address:addr, pay:pay, items:items, subtotal:t.sub, shipping:t.ship, total:t.total, status:'결제완료'};
+  orders.unshift(order); saveJSON('sunshine_orders_v1', orders);
+  items.forEach(function(it){ var p=findProduct(it.id); if(p) p.stock=Math.max(0, p.stock-it.qty); });
+  saveJSON('sunshine_products_v1', products);
+  cart=[]; saveJSON('sunshine_cart_v1', cart); updateCartCount(); renderProducts();
+  document.getElementById('done-text').innerHTML='주문번호 <strong>'+esc(orderNo)+'</strong><br>결제금액 <strong>'+won(t.total)+'</strong> ('+esc(pay)+', 모의결제)<br>'+esc(name)+'님, '+esc(addr)+'로 배송할게요.';
+  showView('done');
+}
+function renderOrders(){
+  var box=document.getElementById('orders-list'); if(!box) return;
+  if(!session){ box.innerHTML='<p class="meta">주문내역을 보려면 로그인해 주세요.</p><button class="btn" onclick="showView(\'auth\')">로그인하기</button>'; return; }
+  var mine=orders.filter(function(o){ return o.email===session.email; });
+  if(!mine.length){ box.innerHTML='<p class="meta">아직 주문이 없어요.</p>'; return; }
+  box.innerHTML=mine.map(function(o){
+    var items=o.items.map(function(it){ return esc(it.title)+' × '+it.qty+' — '+won(it.price*it.qty); }).join('<br>');
+    return '<div class="order"><div class="row"><strong>'+esc(o.no)+'</strong><span class="badge">'+esc(o.status)+'</span><span class="spacer"></span><span class="meta">'+esc(o.date)+'</span></div>'
+      + '<div style="margin-top:8px">'+items+'</div>'
+      + '<div class="row" style="margin-top:8px"><span class="meta">결제: '+esc(o.pay)+' · 배송지: '+esc(o.address)+'</span><span class="spacer"></span><strong>총 '+won(o.total)+'</strong></div></div>';
+  }).join('');
+}
+
+/* Admin: add / edit / delete products */
+function saveProduct(){
+  var title=document.getElementById('ad-title').value.trim();
+  var subject=document.getElementById('ad-subject').value;
+  var age=document.getElementById('ad-age').value;
+  var price=parseInt(document.getElementById('ad-price').value,10);
+  var stock=parseInt(document.getElementById('ad-stock').value,10);
+  var color=document.getElementById('ad-color').value;
+  var emoji=document.getElementById('ad-emoji').value;
+  var desc=document.getElementById('ad-desc').value.trim();
+  if(!title || isNaN(price) || isNaN(stock)){ alert('교재 이름, 가격, 재고를 입력해 주세요.'); return; }
+  if(editingId){
+    var p=findProduct(editingId);
+    if(p){ p.title=title; p.subject=subject; p.age=age; p.price=price; p.stock=stock; p.color=color; p.emoji=emoji; p.desc=desc||p.desc; }
+    alert('교재를 수정했어요.');
+  } else {
+    products.push({id:'p'+Date.now(), title:title, subject:subject, age:age, price:price, stock:stock, color:color, emoji:emoji, publisher:'햇살교재', desc:desc||'새로 등록한 교재예요.'});
+    alert('교재를 등록했어요.');
+  }
+  saveJSON('sunshine_products_v1', products);
+  cancelEdit(); renderProducts(); renderAdmin();
+}
+function editProduct(id){
+  var p=findProduct(id); if(!p) return;
+  editingId=id;
+  document.getElementById('ad-title').value=p.title;
+  document.getElementById('ad-subject').value=p.subject;
+  document.getElementById('ad-age').value=p.age;
+  document.getElementById('ad-price').value=p.price;
+  document.getElementById('ad-stock').value=p.stock;
+  document.getElementById('ad-color').value=p.color;
+  document.getElementById('ad-emoji').value=p.emoji;
+  document.getElementById('ad-desc').value=p.desc;
+  document.getElementById('ad-save-btn').textContent='수정 저장하기';
+  document.getElementById('ad-cancel-btn').classList.remove('hidden');
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+function cancelEdit(){
+  editingId=null;
+  ['ad-title','ad-price','ad-stock','ad-desc'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('ad-color').value='#FF6B35';
+  document.getElementById('ad-save-btn').textContent='교재 등록하기';
+  document.getElementById('ad-cancel-btn').classList.add('hidden');
+}
+function deleteProduct(id){
+  var p=findProduct(id); if(!p) return;
+  if(!confirm('“'+p.title+'”을(를) 삭제할까요?')) return;
+  products=products.filter(function(x){ return x.id!==id; });
+  cart=cart.filter(function(c){ return c.id!==id; });
+  saveJSON('sunshine_products_v1', products); saveJSON('sunshine_cart_v1', cart);
+  updateCartCount(); renderProducts(); renderAdmin();
+}
+function renderAdmin(){
+  var box=document.getElementById('admin-list'); if(!box) return;
+  box.innerHTML='<h3>등록된 교재 ('+products.length+'권)</h3>' + products.map(function(p){
+    return '<div class="admin-item"><div class="thumb" style="background:'+esc(p.color)+'">'+esc(p.emoji)+'</div>'
+      + '<div style="flex:1"><strong>'+esc(p.title)+'</strong><br><span class="meta">'+esc(p.subject)+' · '+esc(p.age)+' · '+won(p.price)+' · 재고 '+p.stock+'권</span></div>'
+      + '<button class="btn secondary small" onclick="editProduct(\''+p.id+'\')">수정</button>'
+      + '<button class="btn secondary small" onclick="deleteProduct(\''+p.id+'\')">삭제</button></div>';
+  }).join('');
+}
+
+/* Init — never let a render failure blank the page */
+try{ renderUserArea(); renderProducts(); updateCartCount(); }
+catch(e){ try{ var b=document.getElementById('error-banner'); if(b) b.style.display='block'; }catch(e2){} }
+</script>
+</body>
+</html>
