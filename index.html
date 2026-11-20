@@ -6,9 +6,9 @@
 <title>햇살 교재몰 — 유치원 교재 쇼핑몰</title>
 <style>
   :root{
-    --bg:#FFF8EC; --card:#FFFFFF; --ink:#33302B; --muted:#8A8378;
-    --accent:#FF6B35; --accent2:#FFB703; --green:#1DB99A; --line:#F0E6D8;
-    --radius:16px; --shadow:0 4px 16px rgba(80,50,0,.08);
+    --bg:#F6F4EF; --card:#FFFFFF; --ink:#2F2D2A; --muted:#7D766C;
+    --accent:#51655A; --accent2:#8A9B8E; --green:#5F7A6A; --line:#E6E1D8;
+    --radius:14px; --shadow:0 4px 14px rgba(60,55,45,.07);
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
@@ -30,9 +30,9 @@
   nav button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
   .cart-count{background:#fff;color:var(--accent);border-radius:999px;padding:0 7px;margin-left:5px;font-size:13px}
   main{padding:20px 0 60px}
-  .hero{background:#FFE9C9;border-radius:var(--radius);padding:20px;margin-bottom:18px}
+  .hero{background:#EDE9DF;border-radius:var(--radius);padding:20px;margin-bottom:18px}
   .hero h1{margin:0 0 6px;font-size:22px}
-  .hero p{margin:0;color:#6B5B45}
+  .hero p{margin:0;color:#5F584E}
   .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;align-items:center}
   .filters label{font-size:14px;font-weight:700;color:var(--muted)}
   select,input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],textarea{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:15px;background:#fff;font-family:inherit}
@@ -61,8 +61,8 @@
   .totals div{display:flex;justify-content:space-between;padding:4px 0}
   .totals .grand{font-weight:800;font-size:18px;border-top:2px solid var(--line);margin-top:8px;padding-top:10px}
   .order{border:2px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
-  .badge{display:inline-block;background:#E6F7F1;color:#0B7A63;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
-  .notice{background:#FFF3D6;border:1px solid #FFE08A;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px}
+  .badge{display:inline-block;background:#E7EEE9;color:#3E5A4A;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
+  .notice{background:#F1EFE8;border:1px solid #DDD6C4;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px}
   #error-banner{display:none;background:#FDECEA;color:#7A1F1A;border:1px solid #F5B5B0;border-radius:12px;padding:14px;margin:14px 0}
   #error-banner button{margin-top:8px}
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
@@ -85,7 +85,7 @@
 <header>
   <div class="wrap">
     <div class="topbar">
-      <div class="logo" onclick="showView('shop')">🌞 햇살 교재몰<small>유치원 교재 쇼핑몰 · 햇살교재</small></div>
+      <div class="logo" onclick="showView('shop')">햇살 교재몰<small>유치원 교재 쇼핑몰 · 햇살교재</small></div>
       <div class="search"><input type="text" id="search" placeholder="교재를 검색해 보세요 (예: 한글, 수학)" oninput="renderProducts()"></div>
       <span id="user-area"></span>
       <button class="btn" onclick="showView('cart')">🛒 장바구니<span class="cart-count" id="cart-count">0</span></button>
@@ -218,7 +218,7 @@
         <div><label>연령</label><select id="ad-age"><option>만 3세</option><option>만 4세</option><option>만 5세</option><option>공통</option></select></div>
         <div><label>가격 (원)</label><input type="number" id="ad-price" min="0" placeholder="12000"></div>
         <div><label>재고 (권)</label><input type="number" id="ad-stock" min="0" placeholder="30"></div>
-        <div><label>표지 색상</label><input type="color" id="ad-color" value="#FF6B35" style="height:44px"></div>
+        <div><label>표지 색상</label><input type="color" id="ad-color" value="#B98A6E" style="height:44px"></div>
         <div><label>표지 이모지</label><select id="ad-emoji"><option>✏️</option><option>🔢</option><option>🔤</option><option>🎨</option><option>🔬</option><option>🎵</option><option>📚</option><option>🌈</option></select></div>
         <div class="full"><label>설명</label><textarea id="ad-desc" rows="3" placeholder="교재 설명을 적어주세요."></textarea></div>
         <div class="full row">
@@ -251,12 +251,12 @@
 })();
 
 var DEFAULT_PRODUCTS = [
-  {id:'p1', title:'한글 첫걸음 워크북', subject:'한글', age:'만 4세', price:12000, stock:42, color:'#FF6B35', emoji:'✏️', publisher:'햇살교재', desc:'자음과 모음을 놀이처럼 익히는 첫 한글 워크북이에요. 스티커 활동과 따라 쓰기가 가득해요.'},
-  {id:'p2', title:'숫자 놀이 수학 교재', subject:'수학', age:'만 3세', price:11000, stock:38, color:'#1DB99A', emoji:'🔢', publisher:'햇살교재', desc:'1부터 20까지, 세고 붙이고 그리며 수 개념을 잡는 놀이 수학 교재예요.'},
-  {id:'p3', title:'알파벳 팝! 영어 그림책', subject:'영어', age:'만 5세', price:15000, stock:27, color:'#FFB703', emoji:'🔤', publisher:'햇살교재', desc:'알파벳 대소문자와 파닉스를 그림과 챈트로 배우는 영어 첫 교재예요. QR 음원 포함.'},
-  {id:'p4', title:'오감 미술 놀이북', subject:'미술', age:'공통', price:13000, stock:35, color:'#EF476F', emoji:'🎨', publisher:'햇살교재', desc:'물감, 색종이, 점토 활동을 한 권에 담았어요. 집에서도 유치원에서도 즐기는 미술 놀이북.'},
-  {id:'p5', title:'호기심 과학 탐험대', subject:'과학', age:'만 5세', price:14000, stock:22, color:'#118AB2', emoji:'🔬', publisher:'햇살교재', desc:'자석, 물, 식물 관찰까지 — 직접 해보는 간단한 실험으로 과학 호기심을 키워요.'},
-  {id:'p6', title:'동요와 리듬 음악 교재', subject:'음악', age:'공통', price:10000, stock:50, color:'#7C5CBF', emoji:'🎵', publisher:'햇살교재', desc:'계절 동요 24곡과 리듬 악기 놀이를 담은 음악 교재예요. 악보와 율동 가이드 포함.'}
+  {id:'p1', title:'한글 첫걸음 워크북', subject:'한글', age:'만 4세', price:12000, stock:42, color:'#B98A6E', emoji:'✏️', publisher:'햇살교재', desc:'자음과 모음을 놀이처럼 익히는 첫 한글 워크북이에요. 스티커 활동과 따라 쓰기가 가득해요.'},
+  {id:'p2', title:'숫자 놀이 수학 교재', subject:'수학', age:'만 3세', price:11000, stock:38, color:'#7D9B8A', emoji:'🔢', publisher:'햇살교재', desc:'1부터 20까지, 세고 붙이고 그리며 수 개념을 잡는 놀이 수학 교재예요.'},
+  {id:'p3', title:'알파벳 팝! 영어 그림책', subject:'영어', age:'만 5세', price:15000, stock:27, color:'#A89A7A', emoji:'🔤', publisher:'햇살교재', desc:'알파벳 대소문자와 파닉스를 그림과 챈트로 배우는 영어 첫 교재예요. QR 음원 포함.'},
+  {id:'p4', title:'오감 미술 놀이북', subject:'미술', age:'공통', price:13000, stock:35, color:'#A87D7D', emoji:'🎨', publisher:'햇살교재', desc:'물감, 색종이, 점토 활동을 한 권에 담았어요. 집에서도 유치원에서도 즐기는 미술 놀이북.'},
+  {id:'p5', title:'호기심 과학 탐험대', subject:'과학', age:'만 5세', price:14000, stock:22, color:'#7A8FA3', emoji:'🔬', publisher:'햇살교재', desc:'자석, 물, 식물 관찰까지 — 직접 해보는 간단한 실험으로 과학 호기심을 키워요.'},
+  {id:'p6', title:'동요와 리듬 음악 교재', subject:'음악', age:'공통', price:10000, stock:50, color:'#8A7FA8', emoji:'🎵', publisher:'햇살교재', desc:'계절 동요 24곡과 리듬 악기 놀이를 담은 음악 교재예요. 악보와 율동 가이드 포함.'}
 ];
 var FREE_SHIPPING = 30000, SHIPPING_FEE = 3000;
 
@@ -493,7 +493,7 @@ function editProduct(id){
 function cancelEdit(){
   editingId=null;
   ['ad-title','ad-price','ad-stock','ad-desc'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('ad-color').value='#FF6B35';
+  document.getElementById('ad-color').value='#B98A6E';
   document.getElementById('ad-save-btn').textContent='교재 등록하기';
   document.getElementById('ad-cancel-btn').classList.add('hidden');
 }
